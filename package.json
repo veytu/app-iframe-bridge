@@ -1,0 +1,23 @@
+{
+  "name": "@netless/app-iframe-bridge",
+  "version": "0.0.2",
+  "main": "dist/main.cjs.js",
+  "module": "dist/main.es.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "src",
+    "dist",
+    "README-zh.md"
+  ],
+  "scripts": {
+    "types": "cross-env NODE_ENV=production tsc --declaration --emitDeclarationOnly --outDir dist",
+    "build": "vite build && npm run types",
+    "build:dev": "vite build --mode development && npm run types",
+    "cleanup": "rimraf ./dist"
+  },
+  "devDependencies": {
+    "@netless/app-shared": "workspace:*",
+    "emittery": "^0.10.1",
+    "side-effect-manager": "^1.1.0"
+  }
+}
