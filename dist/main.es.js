@@ -17,6 +17,8 @@ var __spreadValues = (a, b) => {
   return a;
 };
 var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
+var _a;
+import { WindowManager } from "@netless/window-manager";
 const SOUP = "!#%()*+,-./:;=?@[]^_`{|}~ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 const SOUP_LEN = 87;
 const ID_LEN = 20;
@@ -528,17 +530,25 @@ var DomEvents = /* @__PURE__ */ ((DomEvents2) => {
   return DomEvents2;
 })(DomEvents || {});
 function getUserPayload(context) {
-  var _a;
+  var _a2;
   const room = context.getRoom();
   const displayer = context.getDisplayer();
   const memberId = displayer.observerId;
-  const userPayload = (_a = displayer.state.roomMembers.find((member) => member.memberId === memberId)) == null ? void 0 : _a.payload;
+  const userPayload = (_a2 = displayer.state.roomMembers.find((member) => member.memberId === memberId)) == null ? void 0 : _a2.payload;
   const uid = (userPayload == null ? void 0 : userPayload.uid) || (room == null ? void 0 : room.uid) || "";
   const nickName = (userPayload == null ? void 0 : userPayload.nickName) || uid;
   const userId = (userPayload == null ? void 0 : userPayload.userId) || uid;
   const cursorName = (userPayload == null ? void 0 : userPayload.cursorName) || nickName || "";
   return { memberId, uid, userId, nickName, cursorName };
 }
+const _ua = (_a = window.navigator) == null ? void 0 : _a.userAgent;
+_ua == null ? void 0 : _ua.match(/(Edge?)\/(\d+)/);
+const isIOS = () => {
+  return typeof navigator !== "undefined" && typeof window !== "undefined" && /iPad|iPhone|iPod/.test(_ua);
+};
+const isAndroid = () => {
+  return typeof navigator !== "undefined" && /Android/.test(_ua);
+};
 const ClickThroughAppliances = /* @__PURE__ */ new Set(["clicker", "selector"]);
 const IframeBridge = {
   kind: "IframeBridge",
@@ -594,7 +604,7 @@ const IframeBridge = {
     let toggleClickThrough = () => {
     };
     const shouldClickThrough = (tool) => {
-      return ClickThroughAppliances.has(tool);
+      return isIOS() || isAndroid() || WindowManager.appReadonly ? false : ClickThroughAppliances.has(tool);
     };
     if (view) {
       const viewBox = document.createElement("div");
@@ -642,9 +652,9 @@ const IframeBridge = {
     };
     const log = (...args) => false;
     const postMessage = (message) => {
-      var _a;
+      var _a2;
       log("[IframeBridge] postMessage %s %O", message.kind, message.payload);
-      (_a = iframe.contentWindow) == null ? void 0 : _a.postMessage(JSON.parse(JSON.stringify(message)), "*");
+      (_a2 = iframe.contentWindow) == null ? void 0 : _a2.postMessage(JSON.parse(JSON.stringify(message)), "*");
     };
     const dispatchMagixEvent = (event, payload) => {
       if (context.getIsWritable()) {
@@ -668,8 +678,8 @@ const IframeBridge = {
       sendInitMessage();
       emitter.emit(DomEvents.IframeLoad, ev);
       emitter.on(IframeEvents.Ready, () => {
-        var _a, _b;
-        if ((_a = attrs.lastEvent) == null ? void 0 : _a.payload) {
+        var _a2, _b;
+        if ((_a2 = attrs.lastEvent) == null ? void 0 : _a2.payload) {
           postMessage((_b = attrs.lastEvent) == null ? void 0 : _b.payload);
         }
       });

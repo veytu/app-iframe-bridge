@@ -1,4 +1,4 @@
-import type { NetlessApp } from "@netless/window-manager";
+import { type NetlessApp } from "@netless/window-manager";
 export interface Attributes {
     src: string;
     displaySceneDir: string;
