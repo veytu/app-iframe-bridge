@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ensureAttributes } from "@netless/app-shared";
-import { WindowManager, type NetlessApp } from "@netless/window-manager";
+import { type NetlessApp } from "@netless/window-manager";
 import Emittery from "emittery";
 import { SideEffectManager } from "side-effect-manager";
 import type { AnimationMode, ApplianceNames, Event, RoomState } from "white-web-sdk";
@@ -8,7 +8,6 @@ import { fakeRoomStateChanged, nextPage, pageToScenes, prevPage } from "./page";
 import { height } from "./hardcode";
 import { DomEvents, IframeEvents } from "./typings";
 import { getUserPayload } from "./utils";
-import { isAndroid, isIOS } from "./environment";
 
 export interface Attributes {
   src: string;
@@ -83,9 +82,7 @@ const IframeBridge: NetlessApp<Attributes> = {
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     let toggleClickThrough: (enable?: boolean) => void = () => {};
     const shouldClickThrough = (tool?: ApplianceNames) => {
-      return isIOS() || isAndroid() || WindowManager.appReadonly
-        ? false
-        : ClickThroughAppliances.has(tool as ApplianceNames);
+      return role == 0 ? ClickThroughAppliances.has(tool as ApplianceNames) : false;
     };
 
     if (view) {
